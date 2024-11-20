@@ -17,5 +17,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 글을 댓글을 리뷰를 아이템을 삭제할때도 같아야 삭제하는데
     // 같은지 알려면 먼저 로그인한사람의 정보를 받아와야함으로 필요
     Member findByEmail (String email);
-
 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>아이템 등록</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <form action="" method="post">
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        </div>
+
+        제품명: <input>
+        가격: <input>
+        재고: <input>
+        제품상세설명: <textarea></textarea>
+
+    </form>
+
+</th:block>
+
+<th:block layout:fragment="script">
+
+</th:block>
+
+</body>
+</html>

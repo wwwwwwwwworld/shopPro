@@ -46,8 +46,6 @@ class ItemRepositoryTest {
                             .itemDetail("테스트상품 상세설명")
                             .itemSellStatus(ItemSellStatus.SELL)
                             .stockNumber(100)
-                            .regTime(LocalDateTime.now())
-                            .updateTime(LocalDateTime.now())
                             .build();
             item.setItemNm(item.getItemNm()+i);
             item.setItemDetail(item.getItemDetail()+i);
