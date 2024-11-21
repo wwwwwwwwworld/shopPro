@@ -19,9 +19,5 @@ public class AuditorAwareImpl implements AuditorAware {
         }
 
         return Optional.of(userId);
-
-
-
-
     }
 }

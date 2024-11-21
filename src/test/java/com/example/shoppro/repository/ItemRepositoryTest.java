@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,21 @@ class ItemRepositoryTest {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Test
+    @DisplayName("양방향 테스트")
+    @Transactional
+    public void selectItem(){
+
+        // 필요한값 부모id 411L
+        // 실행내용 부모를 item을 검색한다. 특정 pk값을 가지고
+        Item item =
+        itemRepository.findById(411L).get();
+
+        // 결과 예상 부모를 검색하면 부모와 + 자식의 모든 데이터를 받는다.
+
+        log.info(item);
+    }
 
     @Test
     @DisplayName("상품 저장 테스트")

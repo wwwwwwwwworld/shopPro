@@ -9,25 +9,94 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-    <form action="" method="post">
 
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    <form action="/admin/item/new" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
+
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="itemNm" class="form-label">상품명</label>
+                            <input type="text" class="form-control" th:field="*{itemNm}" id="itemNm" >
+                            <p th:if="${#fields.hasErrors('itemNm')}" th:errors="*{itemNm}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="price" class="form-label">가격</label>
+                            <input type="number" min="0" class="form-control" th:field="*{price}" id="price">
+                            <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="stockNumber" class="form-label">재고 수량</label>
+                            <input type="number" min="0" class="form-control" th:field="*{stockNumber}" id="stockNumber">
+                            <p th:if="${#fields.hasErrors('stockNumber')}" th:errors="*{stockNumber}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="itemDetail" class="form-label">상세설명 </label>
+                            <textarea class="form-control" th:field="*{itemDetail}" id="itemDetail" rows="3"></textarea>
+                            <p th:if="${#fields.hasErrors('itemDetail')}" th:errors="*{itemDetail}" class="fieldError"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="itemSellStatus" class="form-label">상품 판매 상태 </label>
+                            <select th:field="*{itemSellStatus}" id="itemSellStatus" class="form-select" aria-label="Default select example">
+                                <option value="SELL">판매중</option>
+                                <option value="SOLD_OUT">품절</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">이미지등록</label>
+                            <input class="form-control" name="multipartFiles" type="file">
+                            <input class="form-control" name="multipartFiles" type="file">
+                            <input class="form-control" name="multipartFiles" type="file">
+                            <input class="form-control" name="multipartFiles" type="file">
+                            <input class="form-control" name="multipartFiles" type="file">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button class="btn btn-dark">저장</button>
+                        <button type="button">목록</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
-
-        제품명: <input>
-        가격: <input>
-        재고: <input>
-        제품상세설명: <textarea></textarea>
-
     </form>
-
 </th:block>
-
 <th:block layout:fragment="script">
+    <script>
+        $(document).ready(function (){
 
+            $("form").on("submit", function (e) {
+                if(itemNmValid()){
+                    return false
+                }
+            })
+
+            function itemNmValid(){
+                let itemNmVal = $("#itemNm").val()
+                if (itemNmVal.length < 2 || itemNmVal.length > 50){
+                    return true
+                }
+            }
+        })
+    </script>
 </th:block>
-
 </body>
 </html>

@@ -9,7 +9,6 @@ public class CustomModelMapper extends ModelMapper {
         if (source == null) {
             return null; // null 반환
         }
-
         return super.map(source, destinationType);
     }
 }
