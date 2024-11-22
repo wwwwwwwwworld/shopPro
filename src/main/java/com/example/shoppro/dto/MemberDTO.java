@@ -9,19 +9,25 @@ import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Getter @Setter @ToString
-@Builder @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberDTO {
 
+    //어차피 등록시에는 안씀
     private Long id;
 
-    @NotBlank
-    @Size(min = 2, max = 10, message = "이름은 2자 이상 10자 이하로")
-    private String name;
 
     @NotBlank
+    @Size(min = 2, max = 10,message = "이름은 2자 이상 10자이하로 작성해주세요")
+    private String name;
+
     @Email(message = "이메일 형식으로 작성해주세요")
-    @Size(min = 2, max = 20, message = "이메일은 2자 이상 20자 이하로")
+    @NotBlank(message = "이메일을 작성해주세요")
+    @Size(min = 2, max = 20,message = "이메일은 2자 이상 20자이하로 작성해주세요")
     private String email;
 
     @NotBlank
@@ -34,14 +40,19 @@ public class MemberDTO {
 
     public Member dtoToEntity (MemberDTO memberDTO){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         Member member = new Member();
         member.setName(memberDTO.getName());
         member.setEmail(memberDTO.getEmail());
         member.setAddress(memberDTO.getAddress());
+
 
         member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
         member.setRole(Role.ADMIN);
 
         return member;
     }
+
+
+
 }

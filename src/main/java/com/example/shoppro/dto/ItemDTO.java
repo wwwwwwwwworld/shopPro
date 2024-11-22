@@ -2,18 +2,19 @@ package com.example.shoppro.dto;
 
 import com.example.shoppro.constant.ItemSellStatus;
 import com.example.shoppro.entity.ItemImg;
-import com.example.shoppro.entity.base.BaseEntity;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Data
 @NoArgsConstructor
@@ -21,29 +22,28 @@ import java.util.stream.Collectors;
 @Builder
 public class ItemDTO {
 
-
-    private Long id;            // 상품 코드
+    private Long id;            //상품 코드
 
     @NotBlank
-    @Size(max = 50, min = 2, message = "상품명은 2~50 이상입니다")
-    private String itemNm;      // 상품명
+    @Size(max = 50, min = 2, message = "상품명은 2~50자 입니다.")
+    private String itemNm;      //상품명
 
     @NotNull
     @PositiveOrZero
-    private int price;          // 가격
+    private int price;          //가격
 
     @NotNull
     @PositiveOrZero
     private int stockNumber;    // 재고수량
 
     @NotBlank
-    private String itemDetail;  // 상품 상세설명
+    private String itemDetail;  //상품 상세설명
 
-    private ItemSellStatus itemSellStatus; // 상품 판매 상태
+    private ItemSellStatus itemSellStatus;      // 상품 판매 상태
 
     private List<ItemImgDTO> itemImgDTOList;
 
-    public ItemDTO setItemImgDTOList(List<ItemImg> itemImgList){
+    public ItemDTO setItemImgDTOList(List<ItemImg> itemImgList) {
 
         ModelMapper modelMapper = new ModelMapper();
 
