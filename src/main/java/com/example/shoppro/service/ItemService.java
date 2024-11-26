@@ -22,12 +22,13 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class ItemService {
-    
+
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
-    
+
     //이미지 등록할 itemimgservice 의존성추가
     private final ItemImgService itemImgService;
+
 
     //상품등록
     public Long saveItem(ItemDTO itemDTO , List<MultipartFile> multipartFiles) throws IOException {
@@ -36,24 +37,49 @@ public class ItemService {
         Item item = modelMapper.map(itemDTO, Item.class);
 
         item =
-        itemRepository.save(item);
+                itemRepository.save(item);
 
         //이미지등록 추가 할예정
         itemImgService.saveImg(item.getId(),multipartFiles );
 
+
         return item.getId();
+
+
+
+
     }
+
 
     public ItemDTO read(Long id){
 
+
         Item item =
-        itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+                itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         ItemDTO itemDTO = modelMapper.map(item, ItemDTO.class)
                 .setItemImgDTOList(item.getItemImgList());
 
+
+
         return itemDTO;
     }
+    public ItemDTO read(Long id, String email){
+
+
+        Item item =
+                itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        ItemDTO itemDTO = modelMapper.map(item, ItemDTO.class)
+                .setItemImgDTOList(item.getItemImgList());
+
+
+
+        return itemDTO;
+    }
+
+
+
 
     public PageResponseDTO<ItemDTO> list(PageRequestDTO pageRequestDTO, String email) {
 
@@ -85,4 +111,5 @@ public class ItemService {
                 .build();
         return itemDTOPageResponseDTO;
     }
+
 }

@@ -9,21 +9,88 @@
 </head>
 <body>
 <th:block layout:fragment="content">
+    <div class="row">
+        <div class="col text-end">
+            <button class="btn btn-dark">제품등록</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}">
 
-    <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}" th:each="list: ${pageResponseDTO.dtoList}">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>제품명</td>
+                        <td>작성자</td>
+                        <td>등록일자</td>
+                        <td>수정일자</td>
+                    </tr>
+                    </thead>
+                    <th:block th:each="list: ${pageResponseDTO.dtoList}">
+                        <tbody>
+                        <tr class="align-middle">
+                            <td th:text="${list.id}"></td>
+                            <td >
+                                <a th:href="@{/admin/item/read(id=${list.id})}">
+                                    [[${list.itemNm}]]
+                                </a>
+                            </td>
+                            <td th:text="${list.createBy}"></td>
+                            <td th:text="${#temporals.format(list.regTime, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#temporals.format(list.updateTime, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <button class="btn btn-info updateMoveBtn" th:value="${list.id}">수정</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary delMoveBtn" th:value="${list.id}">삭제</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </th:block>
+                </table>
 
-        <ul>
-            <li th:text="${list.itemNm}"></li>
-        </ul>
+            </th:block>
+            <th:block th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}" >
 
+                <h1>게시물이 없습니다.</h1>
+
+            </th:block>
+        </div>
+    </div>
+    <th:block th:if="${not #lists.isEmpty(pageResponseDTO.dtoList)}">
+        <div class="row">
+            <div class="col">검색틀</div>
+            <div class="col">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <!--이전으로-->
+                        <th:block th:if="${pageResponseDTO.prev}">
+                            <li class="page-item"><a class="page-link" th:href="|@{'/admin/item/list?page=' +${pageResponseDTO.start-1}}|">Previous</a></li>
+                        </th:block>
+
+                        <!--반복되는 페이지들 1~19-->
+                        <th:block th:each="num: ${#numbers.sequence(pageResponseDTO.start, pageResponseDTO.end)}">
+                            <li class="page-item"><a class="page-link" th:href="|@{'/admin/item/list?page=' +${num}}|">[[${num}]]</a></li>
+                        </th:block>
+
+                        <!--다음으로-->
+                        <th:block th:if="${pageResponseDTO.next}">
+                            <li class="page-item"><a class="page-link" th:href="|@{'/admin/item/list?page=' +${pageResponseDTO.end+1}}|">Next</a></li>
+                        </th:block>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </th:block>
-    <th:block th:unless="${not #lists.isEmpty(pageResponseDTO.dtoList)}" >
 
-        <h1>게시물이 없습니다.</h1>
-
-    </th:block>
+    <script>
+        $(".newproduct").on("click", function (){
+            location.href = "/admin/item/new";
+        })
+    </script>
 
 </th:block>
-
 </body>
 </html>

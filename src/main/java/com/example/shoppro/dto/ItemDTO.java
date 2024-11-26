@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,10 @@ public class ItemDTO {
     private ItemSellStatus itemSellStatus;      // 상품 판매 상태
 
     private List<ItemImgDTO> itemImgDTOList;
+
+    private String createBy;
+    private LocalDateTime regTime;
+    private LocalDateTime updateTime;
 
     public ItemDTO setItemImgDTOList(List<ItemImg> itemImgList) {
 

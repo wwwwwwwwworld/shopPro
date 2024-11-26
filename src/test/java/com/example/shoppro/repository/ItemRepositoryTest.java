@@ -36,6 +36,16 @@ class ItemRepositoryTest {
     EntityManager entityManager;
 
     @Test
+    @Transactional
+    public void findByIdaAndCreateByTest(){
+
+        Long id = 244L;
+        String email = "bang@a.a";
+
+        log.info(itemRepository.findByIdaAndCreateBy(id, email));
+    }
+
+    @Test
     @DisplayName("양방향 테스트")
     @Transactional
     public void selectItem(){
@@ -165,6 +175,7 @@ class ItemRepositoryTest {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
         QItem qItem = QItem.item;
         // select * from item
         String keyword = null;
