@@ -42,7 +42,7 @@ class ItemRepositoryTest {
         Long id = 244L;
         String email = "bang@a.a";
 
-        log.info(itemRepository.findByIdaAndCreateBy(id, email));
+        log.info(itemRepository.findByIdAndCreateBy(id, email));
     }
 
     @Test

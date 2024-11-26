@@ -1,16 +1,11 @@
 package com.example.shoppro.repository;
 
-import com.example.shoppro.entity.Item;
 import com.example.shoppro.entity.Member;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    // 로그인 한 유저정보 email을 통해서 각종 검색을 위한 기능
-    // 등록시에도 사용
+        //로그인 한 유저정보 email을 통해서 각종 검색을 위한 기능
+    //등록시에도 사용
     // 로그인한사람의 아이템에서도 사용
     // 등록한 글을 수정할때 로그인한사람의 정보를 받아와서 글등록한사람과
     // 비교시에도 사용

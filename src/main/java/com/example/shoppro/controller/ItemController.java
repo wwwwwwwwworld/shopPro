@@ -3,7 +3,6 @@ package com.example.shoppro.controller;
 import com.example.shoppro.dto.ItemDTO;
 import com.example.shoppro.dto.PageRequestDTO;
 import com.example.shoppro.dto.PageResponseDTO;
-import com.example.shoppro.entity.Item;
 import com.example.shoppro.service.ItemService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -50,13 +49,23 @@ public class ItemController {
         if(multipartFile.get(0).isEmpty()){
             model.addAttribute("msg", "대표이미지는 꼭 등록해주세요");
             return "/item/itemForm";
-
         }
 
-        if(multipartFile!= null){
-            for (MultipartFile img :  multipartFile){
-                if(!img.getOriginalFilename().equals("")){
-                    log.info(img.getOriginalFilename());
+        // 파일 형식 검증: 모든 파일이 이미지 파일인지 확인
+        for (MultipartFile img : multipartFile) {
+            if (!img.isEmpty()) {
+                // 로그 추가: 파일 정보 확인
+                log.info("파일 이름: " + img.getOriginalFilename());
+                log.info("파일 크기: " + img.getSize() + " bytes");
+                log.info("파일 타입: " + img.getContentType());
+
+                // 파일 형식 검증
+                String contentType = img.getContentType();  // MIME 타입 확인
+                log.info("업로드된 파일 MIME 타입: " + contentType);
+
+                if (contentType == null || !contentType.startsWith("image")) {
+                    model.addAttribute("msg", "이미지 파일만 업로드 가능합니다.");
+                    return "/item/itemForm";  // 이미지 파일이 아니면 다시 폼으로 돌아감
                 }
             }
         }
@@ -94,7 +103,7 @@ public class ItemController {
         try {
             ItemDTO itemDTO =
                     itemService.read(id);
-
+            log.info("itemDTO: " + itemDTO);  // 추가된 디버그 로그
             model.addAttribute("itemDTO", itemDTO);
 
             return "item/read";
@@ -116,7 +125,7 @@ public class ItemController {
 //        model.addAttribute("list", itemService.list());
 //      principal  로그인시 세션에 등록된 이름 우리는 email
         PageResponseDTO<ItemDTO> pageResponseDTO =
-                itemService.list(pageRequestDTO, principal.getName());
+        itemService.list(pageRequestDTO, principal.getName());
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
 
@@ -130,7 +139,7 @@ public class ItemController {
                                  Model model, Principal principal){
 
 
-        //기존 read는 email을 확인하지 않았다.
+        //기존 read는 email을 확인하지 않았다. 
         //관리자는 자신의 글만 봐야함으로 자신의 상품을 검색하는 쿼리는 추가하자
         // 1 검색하고 값을가지고 확인하고 다시 맞다면 list , 만들기 쉽다
         // 2 검색부터 자신의 값을 가져오자  , 정확하다?
@@ -150,9 +159,47 @@ public class ItemController {
         }else {
             return "redirect:/admin/item/list";
         }
-
-
     }
 
+    @PostMapping("/admin/item/update")
+    public String itemupdate(@Valid ItemDTO itemDTO, BindingResult bindingResult, List<MultipartFile> multipartFiles,
+                             Integer[] delino, Long mainino){
+
+        if (bindingResult.hasErrors()){
+            log.info("유효성검사 에러");
+            log.info(bindingResult.getAllErrors()); //확인된 모든 에러 콘솔창 출력
+
+
+            return "/item/update";        //다시 이전 페이지
+        }
+
+        // 삭제번호가 없다면
+//        if (delino != null){
+//            log.info("삭제할 이미지가 없습니다.");
+//        }else {
+//            // 삭제 번호가 있다면
+//            for (Integer ino : delino){
+//                if (ino != null && ino.equals("")){
+//                    log.info("삭제할 번호는 ino" + ino);
+//                }
+//            }
+//        }
+
+//        if (mainino == null){
+//            // 대표이미지가 변경 ( itemid로 찾는다. )
+//            // select * from item_img where item_id = 450 and repimg_yn = 'Y';
+//            // 대표이미지를 0번 파일이 y로 하고
+//            // 기존이미지 대표이미지 삭제 또는 기존대표이미지 url변경
+//            log.info("대표이미지 변경");
+//
+//        }else {
+//            // 대표 이미지가 변경 x
+//            // 대표 이미지 체크여부가 다 N
+//            log.info("대표이미지 미변경");
+//        }
+        itemService.update(itemDTO, itemDTO.getId(), multipartFiles, delino, mainino);
+
+        return null;
+    }
 
 }

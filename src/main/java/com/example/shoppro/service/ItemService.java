@@ -8,6 +8,7 @@ import com.example.shoppro.repository.ItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,15 +22,16 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Log4j2
 public class ItemService {
-
+    
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
-
+    
     //이미지 등록할 itemimgservice 의존성추가
     private final ItemImgService itemImgService;
-
-
+    
+    
     //상품등록
     public Long saveItem(ItemDTO itemDTO , List<MultipartFile> multipartFiles) throws IOException {
 
@@ -37,7 +39,7 @@ public class ItemService {
         Item item = modelMapper.map(itemDTO, Item.class);
 
         item =
-                itemRepository.save(item);
+        itemRepository.save(item);
 
         //이미지등록 추가 할예정
         itemImgService.saveImg(item.getId(),multipartFiles );
@@ -47,7 +49,7 @@ public class ItemService {
 
 
 
-
+        
     }
 
 
@@ -55,7 +57,7 @@ public class ItemService {
 
 
         Item item =
-                itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         ItemDTO itemDTO = modelMapper.map(item, ItemDTO.class)
                 .setItemImgDTOList(item.getItemImgList());
@@ -112,4 +114,39 @@ public class ItemService {
         return itemDTOPageResponseDTO;
     }
 
+    public ItemDTO update(ItemDTO itemDTO, Long id, List<MultipartFile> multipartFiles, Integer[] delino, Long mainino){
+        // itemDTO 수정
+        Item item =
+                itemRepository.findById(itemDTO.getId())
+                        .orElseThrow(EntityNotFoundException::new);
+
+        // set
+        item.setItemNm(itemDTO.getItemNm());
+        item.setPrice(itemDTO.getPrice());
+        item.setItemDetail(itemDTO.getItemDetail());
+        item.setItemSellStatus(itemDTO.getItemSellStatus());
+        item.setStockNumber(itemDTO.getStockNumber());
+
+        //삭제번호가 있다면
+        if(delino != null) {
+            //삭제 번호가 있다면
+            for (Integer ino : delino) {
+
+                if (ino != null && !ino.equals("")) {
+                    log.info("삭제할 번호는 ino" +ino);
+                    itemImgService.removeimg(ino.longValue());
+                }
+            }
+        }
+
+        try {
+            itemImgService.update(id, multipartFiles, mainino);
+
+        }catch (IOException e){
+            // 리다이렉트 업데이트에 id값 가지고 갈까?
+            // TODO: 2024-11-26
+        }
+
+        return null;
+    }
 }

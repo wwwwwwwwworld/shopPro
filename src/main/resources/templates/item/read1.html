@@ -1,38 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}">
+      layout:decorate="~{layouts/layout1}"
+>
 <head>
     <meta charset="UTF-8">
     <title>아이템 상세보기</title>
 </head>
 <body>
 <th:block layout:fragment="content">
-<form th:object="${itemDTO}">
+
+    <form th:object="${itemDTO}">
     <div class="row">
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <div class="card" style="width: 80rem;">
-                        <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
-                    </div>
+                    <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
+
                 </div>
                 <div class="col">
                     <div class="card">
                         <div class="card-body">
+
                             <th:block th:if="${itemDTO.itemSellStatus.name() == 'SELL'}">
                                 <span class="badge text-bg-success">판매중</span>
                             </th:block>
                             <th:block th:if="${itemDTO.itemSellStatus.name() == 'SOLD_OUT'}">
-                                <span class="badge text-bg-success">품절</span>
+                                <span class="badge text-bg-danger">품절</span>
                             </th:block>
                             <label for="itemSellStatus" class="form-label">상품 판매 상태 </label>
                             <select  th:field="*{itemSellStatus}" id="itemSellStatus" class="form-select" aria-label="Default select example">
                                 <option value="SELL">판매중</option>
                                 <option value="SOLD_OUT">품절</option>
                             </select>
-                            <h5 class="card-title" th:text="${itemDTO.itemNm}">제품명</h5>
-                            <p class="card-text">가격</p>
+
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">가격</label>
+                                    <input type="number" min="0" class="form-control" th:field="*{price}" id="price">
+                                    <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError"></p>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="stockNumber"  class="form-label">재고 수량</label>
+                                    <input type="number" min="0" class="form-control" th:field="*{stockNumber}" id="stockNumber">
+                                    <p th:if="${#fields.hasErrors('stockNumber')}" th:errors="*{stockNumber}" class="fieldError"></p>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="itemDetail" class="form-label">상세설명 </label>
+                                    <textarea class="form-control" th:field="*{itemDetail}" id="itemDetail" rows="3"></textarea>
+                                    <p th:if="${#fields.hasErrors('itemDetail')}" th:errors="*{itemDetail}" class="fieldError"></p>
+
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -42,7 +68,7 @@
                     상세설명
                 </div>
             </div>
-            <div class="row" style="background: skyblue">
+            <div class="row" style="background: yellow">
                 <div class="col">
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -52,34 +78,36 @@
                             <button class="nav-link" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" disabled>Disabled</button>
                         </div>
                     </nav>
-                </div>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="row">
+                    <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
-                            <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-                                <th:block th:unless="${img.repimgYn == 'Y'}">
-                                    <div class="col">
-                                        <img width="90%" th:src="${img.imgUrl}">
-                                    </div>
+                            <div class="row">
+
+                                <th:block th:each="img: ${itemDTO.itemImgDTOList}">
+                                    <th:block th:unless="${img.repimgYn == 'Y'}">
+                                        <div class="col-12">
+                                            <img width="100%" th:src="${img.imgUrl}">
+                                        </div>
+
+                                    </th:block>
+
                                 </th:block>
-                            </th:block>
+
+                            </div>
                         </div>
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                            댓글이 들어갈 곳
+                        </div>
+                        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">...</div>
+                        <div class="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabindex="0">...</div>
                     </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
-                        댓글이 들어갈 곳
-                    </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">...</div>
-                    <div class="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabindex="0">...</div>
                 </div>
             </div>
 
-            <div class="row"></div>
-            <div class="row"></div>
 
         </div>
     </div>
-</form>
-
+    </form>
 </th:block>
+
 </body>
 </html>

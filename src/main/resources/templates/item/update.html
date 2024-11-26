@@ -5,13 +5,13 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>아이템 등록</title>
+    <title>아이템 수정</title>
 </head>
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/admin/item/new" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
-
+    <form action="/admin/item/update" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
+        <input name="id" type="hidden" th:value="${itemDTO.id}">
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
@@ -56,38 +56,49 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="col-12">
-                        <div class="col-12">
-                            <div class="mb-3 imgA">
-                                <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-                                    <th:block th:if="${img.repimgYn == 'Y'}">
+                        <div class="mb-3 ">
+                            <th:block th:each="img: ${itemDTO.itemImgDTOList}">
+
+                                <th:block th:if="${img.repimgYn == 'Y'}">
+                                    <div class="row main imgpreview">
                                         <div class="col-12">
                                             대표이미지
                                             <img width="100%" th:src="${img.imgUrl}">
-                                            <button th:value="${img.id}">삭제</button>
+                                            <input name="mainino" type="hidden" th:value="${img.id}">
+                                        </div>
+                                    </div>
+                                </th:block>
+
+                            </th:block>
+                            <div class="row imgpreviewinput imgpreview">
+                                <th:block th:each="img: ${itemDTO.itemImgDTOList}">
+
+                                    <th:block th:unless="${img.repimgYn == 'Y'}">
+
+                                        <div class="col">
+                                            <img width="100%" th:src="${img.imgUrl}">
+                                            <button type="button" th:value="${img.id}">삭제</button>
                                         </div>
 
                                     </th:block>
-                                </th:block>
-                                <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-                                    <th:block th:unless="${img.repimgYn == 'Y'}">
-                                        <div class="col">
-                                            <img width="100%" th:src="${img.imgUrl}">
-                                            <button th:value="${img.id}">삭제</button>
-                                        </div>
-                                    </th:block>
+
                                 </th:block>
                             </div>
                         </div>
+                    </div>
 
-
+                    <div class="col-12">
 
                         <div class="mb-3 imgA">
                             <label for="formFile" class="form-label">대표이미지</label>
                             <input class="form-control imgInput mainimg"  id="formFile" accept="image/*" name="multipartFile" type="file" >
 
                             <label for="formFilede" class="form-label">상세 이미지</label>
-                            <input class="form-control imgInput mainimg"  id="formFilede" accept="image/*" name="multipartFile" type="file" >
+                            <input class="form-control imgInput "  id="formFilede" accept="image/*" name="multipartFile" type="file" >
+
+
                         </div>
                     </div>
 
@@ -106,18 +117,19 @@
 
 <th:block layout:fragment="script">
 
-   <script>
+   <script th:inline="javascript">
        $(document).ready(function () {
            let msg = [[${msg}]]
-           if (msg!=null){
+           if(msg!=null){
                alert(msg)
            }
+
 
            $("form").on("submit", function (e) {
                if(itemNmValid()){
                    return false
                }
-               if($(".main").find('input:eq(0)') == ""){
+               if($(".main").find('input:eq(0)')  == ""){
                    //  $(".mainimg").val()==""
                    //대표이미지가 없을경우
                    alert("대표이미지를 넣어주세요")
@@ -146,7 +158,12 @@
 
            $(".imgpreview").on("click", "button", function () {
 
+               let num = $(this).val()
+               let str = `<input type="text" name="delino" value="${num}">`
+
                $(this).parent().remove()
+
+               $(".imgpreviewinput").append(str)
 
 
            })
@@ -177,9 +194,14 @@
                        //클래스중에 mainimg가 있다면
                        console.log("이건 대표이미지 인풋입니다.")
                        readURL(this);
+
                    }else {
                        readURL1(this);
+
+
                    }
+
+
 
                })
            }
@@ -189,21 +211,28 @@
                    var reader = new FileReader();
                    reader.onload = function(e) {
                        let inputtag = document.createElement("input")
+
                        inputtag.type = "file"
-                       inputtag.name = "multipartFile"
-                       inputtag.files = input.files
+                       inputtag.name = "multipartFiles"
+
+                       const dataTranster = new DataTransfer();
+                       const fileDatas = Array.from(input.files);
+                       fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                       inputtag.files = dataTranster.files;
 
                        let str1 = ` <div class="preview col">
-                                  <img width="100%" src="${e.target.result}">
-                                  <button type='button' class='bb'>올리지 않기</button>
-                                </div>`
-                       $(".imgpreviewinput").append(str1)
-                       // $(".imgpreviewinput").append(str)
-                       $(".imgpreviewinput").find('div:eq(0)').prepend(inputtag)
-                       $(".imgpreviewinput").find('input:eq(0)').hide()
+                                      <img width="100%" src="${e.target.result}">
+                                      <button type='button' class='bb'>올리지 않기</button>
+                                    </div>`
+                       $(".main").html(str1)
+                       $(".main").find('div:eq(0)').append(inputtag)
+                       $(".main").find('input:eq(0)').hide()
+                       //input.value = "";
                        $(".mainimg").val("")
+
                    };
                    reader.readAsDataURL(input.files[0]);
+
                }
            }
            function readURL1(input) {
@@ -213,20 +242,34 @@
                    reader.onload = function(e) {
                        let inputtag = document.createElement("input")
                        inputtag.type = "file"
-                       inputtag.name = "multipartFile"
-                       inputtag.files = input.files
+                       inputtag.name = "multipartFiles"
+
+                       const dataTranster = new DataTransfer();
+                       const fileDatas = Array.from(input.files);
+                       fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                       inputtag.files = dataTranster.files;
 
                        let str1 = ` <div class="preview col">
                                   <img width="100%" src="${e.target.result}">
                                   <button type='button' class='bb'>올리지 않기</button>
                                 </div>`
-                       $(".main").html(str1)
-                       $(".main").find('div:eq(0)').append(inputtag)
+                       $(".imgpreviewinput").prepend(str1)
+
+                       $(".imgpreviewinput").find('div:eq(0)').prepend(inputtag)
+                       $(".imgpreviewinput").find('input:eq(0)').hide()
+                       // $(".imgInput").val("")
+
+                       input.value = "";
                    };
                    reader.readAsDataURL(input.files[0]);
-                   $(".mainimg").val("")
+
                }
            }
+
+
+
+
+
 
        })
 
