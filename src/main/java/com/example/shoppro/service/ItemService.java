@@ -47,11 +47,7 @@ public class ItemService {
 
         return item.getId();
 
-
-
-        
     }
-
 
     public ItemDTO read(Long id){
 
@@ -148,5 +144,29 @@ public class ItemService {
         }
 
         return null;
+    }
+
+    public void remove(Long id){
+        log.info("서비스로 들어온 삭제할 아이템번호 : " + id);
+
+        itemRepository.deleteById(id);
+    }
+
+    public PageResponseDTO<ItemDTO> mainlist(PageRequestDTO pageRequestDTO) {
+
+        Pageable pageable = pageRequestDTO.getPageable("id");
+        Page<Item> items =
+                itemRepository.getAdminItemPage(pageRequestDTO, pageable);
+        List<ItemDTO> itemDTOPage =
+                items.getContent().stream().map(item -> modelMapper.map(item, ItemDTO.class))
+                        .collect(Collectors.toList());
+
+        PageResponseDTO<ItemDTO> itemDTOPageResponseDTO
+                = PageResponseDTO.<ItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(itemDTOPage)
+                .total((int) items.getTotalElements())
+                .build();
+        return itemDTOPageResponseDTO;
     }
 }

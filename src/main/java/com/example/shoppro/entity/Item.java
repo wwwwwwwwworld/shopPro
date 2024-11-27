@@ -37,14 +37,11 @@ public class Item extends BaseEntity {
 
     @Enumerated(EnumType.STRING)        //enum 가지고 만듬 YES/NO , SELL/SOLD_OUT
     private ItemSellStatus itemSellStatus;      // 상품 판매 상태
-   /* @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;*/
+    private Member member;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)    // 부모를 지우면 자식도 지워진다
     private List<ItemImg> itemImgList;
-
-
-
-
 }

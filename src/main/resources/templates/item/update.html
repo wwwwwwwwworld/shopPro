@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}"
->
+      layout:decorate="~{layouts/layout1}">
 <head>
     <meta charset="UTF-8">
     <title>아이템 수정</title>
@@ -20,7 +19,6 @@
                             <label for="itemNm" class="form-label">상품명</label>
                             <input type="text" class="form-control" th:field="*{itemNm}"  required id="itemNm" >
                             <p th:if="${#fields.hasErrors('itemNm')}" th:errors="*{itemNm}" class="fieldError"></p>
-
                         </div>
                     </div>
                     <div class="col-12">
@@ -28,7 +26,6 @@
                             <label for="price" class="form-label">가격</label>
                             <input type="number" min="0" class="form-control" th:field="*{price}" id="price">
                             <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError"></p>
-
                         </div>
                     </div>
                     <div class="col-12">
@@ -36,7 +33,6 @@
                             <label for="stockNumber"  class="form-label">재고 수량</label>
                             <input type="number" min="0" class="form-control" th:field="*{stockNumber}" id="stockNumber">
                             <p th:if="${#fields.hasErrors('stockNumber')}" th:errors="*{stockNumber}" class="fieldError"></p>
-
                         </div>
                     </div>
                     <div class="col-12">
@@ -44,7 +40,6 @@
                             <label for="itemDetail" class="form-label">상세설명 </label>
                             <textarea class="form-control" th:field="*{itemDetail}" id="itemDetail" rows="3"></textarea>
                             <p th:if="${#fields.hasErrors('itemDetail')}" th:errors="*{itemDetail}" class="fieldError"></p>
-
                         </div>
                     </div>
                     <div class="col-12">
@@ -56,11 +51,9 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="mb-3 ">
                             <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-
                                 <th:block th:if="${img.repimgYn == 'Y'}">
                                     <div class="row main imgpreview">
                                         <div class="col-12">
@@ -70,51 +63,37 @@
                                         </div>
                                     </div>
                                 </th:block>
-
                             </th:block>
                             <div class="row imgpreviewinput imgpreview">
                                 <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-
                                     <th:block th:unless="${img.repimgYn == 'Y'}">
-
                                         <div class="col">
                                             <img width="100%" th:src="${img.imgUrl}">
                                             <button type="button" th:value="${img.id}">삭제</button>
                                         </div>
-
                                     </th:block>
-
                                 </th:block>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-12">
-
                         <div class="mb-3 imgA">
                             <label for="formFile" class="form-label">대표이미지</label>
                             <input class="form-control imgInput mainimg"  id="formFile" accept="image/*" name="multipartFile" type="file" >
 
                             <label for="formFilede" class="form-label">상세 이미지</label>
                             <input class="form-control imgInput "  id="formFilede" accept="image/*" name="multipartFile" type="file" >
-
-
                         </div>
                     </div>
-
                     <div class="col-12">
                        <button class="btn btn-dark">저장</button>
                        <button type="button">목록</button>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
-
-
 </th:block>
-
 <th:block layout:fragment="script">
 
    <script th:inline="javascript">
@@ -123,7 +102,6 @@
            if(msg!=null){
                alert(msg)
            }
-
 
            $("form").on("submit", function (e) {
                if(itemNmValid()){
@@ -136,9 +114,6 @@
 
                    return false
                }
-
-
-
            })
            function itemNmValid() {
                let itemNmVal = $("#itemNm").val()
@@ -148,14 +123,12 @@
                    return true
                }
            }
-
            // $(".addimg").on("click", function () {
            //     let str = '<input class="form-control imgInput" accept="image/*" name="multipartFile" type="file" >'
            //     $(".imgA").append(str)
            //
            //
            // })
-
            $(".imgpreview").on("click", "button", function () {
 
                let num = $(this).val()
@@ -164,8 +137,6 @@
                $(this).parent().remove()
 
                $(".imgpreviewinput").append(str)
-
-
            })
 
            bindDomEvent()
@@ -178,12 +149,9 @@
 
                    let fileExt = fileName.substring(fileName.lastIndexOf(".") +1 )
                    //확장자 소문자로 변환
-
                    fileExt = fileExt.toLowerCase()
-
                    if(fileExt != "jpg" && fileExt != "jpeg" &&
                        fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
-
                        $(this).val("")
                        alert("이미지 파일만 넣어주세요")
                        return false;
@@ -194,15 +162,9 @@
                        //클래스중에 mainimg가 있다면
                        console.log("이건 대표이미지 인풋입니다.")
                        readURL(this);
-
                    }else {
                        readURL1(this);
-
-
                    }
-
-
-
                })
            }
            function readURL(input) {
@@ -229,10 +191,8 @@
                        $(".main").find('input:eq(0)').hide()
                        //input.value = "";
                        $(".mainimg").val("")
-
                    };
                    reader.readAsDataURL(input.files[0]);
-
                }
            }
            function readURL1(input) {
@@ -258,24 +218,13 @@
                        $(".imgpreviewinput").find('div:eq(0)').prepend(inputtag)
                        $(".imgpreviewinput").find('input:eq(0)').hide()
                        // $(".imgInput").val("")
-
                        input.value = "";
                    };
                    reader.readAsDataURL(input.files[0]);
-
                }
            }
-
-
-
-
-
-
        })
-
    </script>
-
 </th:block>
-
 </body>
 </html>
