@@ -11,4 +11,5 @@ public interface ItemsearchRepository {
     //Pageable a = PageRequest.of(0, 10, Sort.by(" 정렬값"));
 
     Page<Item> getAdminItemPage(PageRequestDTO pageRequestDTO, Pageable pageable, String email);
+    Page<Item> getAdminItemPage(PageRequestDTO pageRequestDTO, Pageable pageable);
 }

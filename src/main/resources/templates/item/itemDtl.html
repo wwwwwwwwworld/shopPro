@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>아이템 상세보기</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+
+    <form th:object="${itemDTO}" action="" method="post">
+        <input th:field="*{id}" id="itemid" name="id" type="hidden">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+
+                        <img th:src="${itemDTO.itemImgDTOList.get(0).imgUrl}" class="card-img-top" th:if="${not #lists.isEmpty(itemDTO.itemImgDTOList)}" th:alt="${itemDTO.getItemImgDTOList().get(0).oriImgName}">
+
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <th:block th:if="${itemDTO.itemSellStatus.name() == 'SELL'}">
+                                    <span class="badge text-bg-success">판매중</span>
+                                </th:block>
+                                <th:block th:if="${itemDTO.itemSellStatus.name() == 'SOLD_OUT'}">
+                                    <span class="badge text-bg-danger">품절</span>
+                                </th:block>
+
+                                <div class="col-12 mt-3">
+                                    <div class="mb-3">
+                                        <div class="h4" th:text="${itemDTO.itemNm}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="price" class="form-label">가격</label>
+                                        <input type="number" min="0" class="form-control" th:field="*{price}" id="price" readonly>
+                                        <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError"></p>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="count"  class="form-label">수량</label>
+                                        <input type="number" min="1" class="form-control" name="count" value="1" id="count">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="totalPrice" class="form-label">결제금액 </label>
+                                        <input type="number" min="0" class="form-control" name="count"  id="totalPrice">
+                                    </div>
+                                </div>
+                                <th:block th:if="${itemDTO.itemSellStatus.name() == 'SELL'}">
+                                    <div class="col-12 text-center">
+                                        <button class="btn  btn-danger">장바구니</button><!--장바구니 이벤트 , -->
+                                        <button type="button" class="btn  btn-danger" onclick="order()">주문하기</button><!--주문 이벤트-->
+                                        <script>
+
+                                            function order() {
+
+                                                let url = "/order";
+                                                let paramDate = {
+                                                    itemId : $("#itemid").val() ,
+                                                    count : $("#count").val()
+                                                }
+
+                                                // let param = JSON.stringify(paramDate)
+
+                                                console.log(paramDate)
+                                                // console.log(param)
+
+                                                $.ajax({
+                                                    url : url,
+                                                    type : "post",
+                                                    // contentType : "application/json; charset=utf-8",
+                                                    // data : param,
+                                                    data : paramDate ,
+                                                    success : function (result) {
+                                                        console.log(result)
+                                                        alert(result)
+                                                        location.href = "/";
+                                                    },
+                                                    error : function (result, status, error) {
+                                                    }
+                                                })
+                                            }
+
+                                        </script>
+                                    </div>
+                                </th:block>
+                                <th:block th:if="${itemDTO.itemSellStatus.name() == 'SOLD_OUT'}">
+                                    <h1 class="h3 text-end pe-1" th:text="${itemDTO.itemSellStatus.name()}"></h1>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="" th:text="${itemDTO.itemDetail}"></div>
+                    </div>
+                </div>
+                <div class="row" style="background: yellow">
+                    <div class="col">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">상세페이지</button>
+                                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">리뷰</button>
+                                <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+                                <button class="nav-link" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" disabled>Disabled</button>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                                <div class="row">
+                                    <th:block th:each="img: ${itemDTO.itemImgDTOList}">
+                                        <th:block th:unless="${img.repimgYn == 'Y'}">
+                                            <div class="col-12">
+                                                <img width="100%" th:src="${img.imgUrl}">
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                                댓글이 들어갈 곳
+                            </div>
+                            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">...</div>
+                            <div class="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabindex="0">...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+</body>
+</html>

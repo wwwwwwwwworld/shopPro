@@ -46,7 +46,6 @@ public class MemberDTO {
         member.setEmail(memberDTO.getEmail());
         member.setAddress(memberDTO.getAddress());
 
-
         member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
         member.setRole(Role.ADMIN);
 

@@ -21,11 +21,6 @@ public class ItemImgDTO {
 
     private String repimgYn; //대표이미지 여부
 
-
     private ItemDTO itemDTO;
-
-
-
-
 
 }

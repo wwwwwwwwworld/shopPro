@@ -1,5 +1,6 @@
 package com.example.shoppro.dto;
 
+import com.example.shoppro.constant.ItemSellStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,8 +40,8 @@ public class PageRequestDTO {
                                 // <option value="1w">한달전</option<
                                 // </select>
 
-  private  Long correspondent_num;
-  private Long company_num;
+  private ItemSellStatus itemSellStatus;
+  private String searchBy;
 
   public String[] getTypes(){
 

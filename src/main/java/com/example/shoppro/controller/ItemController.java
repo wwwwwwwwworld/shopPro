@@ -173,33 +173,35 @@ public class ItemController {
             return "/item/update";        //다시 이전 페이지
         }
 
-        // 삭제번호가 없다면
-//        if (delino != null){
-//            log.info("삭제할 이미지가 없습니다.");
-//        }else {
-//            // 삭제 번호가 있다면
-//            for (Integer ino : delino){
-//                if (ino != null && ino.equals("")){
-//                    log.info("삭제할 번호는 ino" + ino);
-//                }
-//            }
-//        }
-
-//        if (mainino == null){
-//            // 대표이미지가 변경 ( itemid로 찾는다. )
-//            // select * from item_img where item_id = 450 and repimg_yn = 'Y';
-//            // 대표이미지를 0번 파일이 y로 하고
-//            // 기존이미지 대표이미지 삭제 또는 기존대표이미지 url변경
-//            log.info("대표이미지 변경");
-//
-//        }else {
-//            // 대표 이미지가 변경 x
-//            // 대표 이미지 체크여부가 다 N
-//            log.info("대표이미지 미변경");
-//        }
         itemService.update(itemDTO, itemDTO.getId(), multipartFiles, delino, mainino);
 
         return null;
     }
 
+    @PostMapping("admin/item/del")
+    public String delitem(Long id){
+
+        log.info("삭제할 아이템번호 : " + id);
+
+        itemService.remove(id);
+
+        return "redirect:/admin/item/list";
+    }
+
+    @GetMapping("item/read")
+    public String read(Long id, Model model, RedirectAttributes redirectAttributes){
+
+        try {
+            ItemDTO itemDTO =
+                    itemService.read(id);
+            model.addAttribute("itemDTO", itemDTO);
+
+            return "item/itemDtl";
+
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 상품입니다.");
+            return "redirect:/";
+            //item/list?msg=존재하지
+        }
+    }
 }

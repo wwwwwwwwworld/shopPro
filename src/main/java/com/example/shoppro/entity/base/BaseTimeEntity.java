@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 @Setter
-public class BaseEntity extends BaseTimeEntity{
+public class BaseTimeEntity {
 
-    // 만든이
+    // 만든날짜
+    @CreatedDate
     @Column(updatable = false)
-    @CreatedBy
-    private String createBy;
+    private LocalDateTime regTime;
 
-    // 수정한이
-    @LastModifiedBy
-    private String mofifiedBy;
+    // 수정날짜
+    @LastModifiedDate
+    private LocalDateTime updateTime;
 }
