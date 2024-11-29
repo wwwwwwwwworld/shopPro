@@ -39,7 +39,7 @@ public class Order extends BaseTimeEntity {
     // order.orderItemList.remove(0);
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,
-            orphanRemoval = true, fetch = FetchType.LAZY)
+            orphanRemoval = true, fetch = FetchType.LAZY) // 양방향
     private List<OrderItem> orderItemList = new ArrayList<>();
 
     public void setOrderItemList(OrderItem item) {

@@ -42,6 +42,7 @@ public class Item extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)    // 부모를 지우면 자식도 지워진다
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.LAZY)    // 부모를 지우면 자식도 지워진다
     private List<ItemImg> itemImgList;
 }

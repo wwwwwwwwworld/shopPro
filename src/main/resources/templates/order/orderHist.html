@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta charset="UTF-8">
+    <title>구매이력</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <h2 class="mb-4">구매이력</h2>
+    <!--구매이력 반복출력-->
+    <th:block th:if="${#lists.isEmpty(orders.getContent())}">
+
+        <h1>구매이력이 없습니다.</h1>
+
+    </th:block>
+    <th:block th:unless="${#lists.isEmpty(orders.getContent())}">
+
+        <th:block th:each="orderHistDTO: ${orders.getContent()}">
+
+            <h4 th:text="${orderHistDTO.orderDate} + ' 주문'"></h4>
+            <div class="ms-3">
+                <th:block th:if="${orderHistDTO.orderStatus.name() == 'ORDER'}">
+                    <button>주문 취소</button>
+                </th:block>
+                <th:block th:unless="${orderHistDTO.orderStatus.name() == 'ORDER'}">
+                    <h4>(취소 완료)</h4>
+                </th:block>
+
+                <div class="card">
+                    <div class="row">
+                        <th:block th:each="orderItemDTO: ${orderHistDTO.orderItemDTOList}">
+                            <div class="col">
+                                <img style="width: 100px; height: 100px" th:src="${orderItemDTO.imgUrl}" th:alt="${orderItemDTO.itemNm}">
+                            </div>
+                            <div class="col">
+                                <strong><span th:text="${orderItemDTO.itemNm}"></span></strong>
+                                <span th:text="${orderItemDTO.orderPrice}+'원'"></span>
+                                <span th:text="${orderItemDTO.count}+'개'"></span>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        <th:block th:with="start=${ (orders.number/maxPage)*maxPage+1},
+        end=(${(orders.totalPages == 0 )? 1 : (start + (maxPage -1 ) < orders.totalPages ? start + (maxPage -1 ) : orders.totalPages)})">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </th:block>
+    </th:block>
+</th:block>
+</body>
+</html>

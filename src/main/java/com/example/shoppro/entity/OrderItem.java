@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@ToString //(exclude = "itemImgList")  //toString 변수 제외할 변수명
+@ToString (exclude = "order")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

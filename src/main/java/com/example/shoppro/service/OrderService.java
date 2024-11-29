@@ -2,10 +2,9 @@ package com.example.shoppro.service;
 
 import com.example.shoppro.constant.OrderStatus;
 import com.example.shoppro.dto.OrderDTO;
-import com.example.shoppro.entity.Item;
-import com.example.shoppro.entity.Member;
-import com.example.shoppro.entity.Order;
-import com.example.shoppro.entity.OrderItem;
+import com.example.shoppro.dto.OrderHistDTO;
+import com.example.shoppro.dto.OrderItemDTO;
+import com.example.shoppro.entity.*;
 import com.example.shoppro.repository.ItemRepository;
 import com.example.shoppro.repository.MemberRepository;
 import com.example.shoppro.repository.OrderRepository;
@@ -16,6 +15,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -87,5 +89,53 @@ public class OrderService {
         }else {
             return null;
         }
+    }
+
+    // 구매이력
+    public Page<OrderHistDTO> getOrderList(String email, Pageable pageable){
+                                // repository에서 필요한 email
+        // 구매목록
+        List<Order> orderList = orderRepository.findOrders(email, pageable);
+
+        // 페이징처리를 위한 총 구매목록의 수
+        Long totalCount = orderRepository.totalCount(email);
+
+        // 구매목록의 구매아이템들을 만들어주기위한 List
+        List<OrderHistDTO> orderHistDTOList = new ArrayList<>();
+
+        // EntityToDto // 주문, 주문아이템들, 주문아이템들의 이미지
+        for (Order order : orderList){
+            OrderHistDTO orderHistDTO = new OrderHistDTO();
+            orderHistDTO.setOrderId(order.getId());
+            orderHistDTO.setOrderDate(order.getOrderDate().toString());
+            orderHistDTO.setOrderStatus(order.getOrderStatus());
+
+            List<OrderItem> orderItemList = order.getOrderItemList();
+
+            for (OrderItem orderItem : orderItemList){
+                OrderItemDTO orderItemDTO = new OrderItemDTO();
+                orderItemDTO.setId(order.getId());
+                orderItemDTO.setItemNm(orderItem.getItem().getItemNm());
+                orderItemDTO.setOrderPrice(orderItem.getOrderPrice());
+                orderItemDTO.setCount(orderItem.getCount());
+
+                // 아이템 주문아이템들중 1개 A
+                List<ItemImg> itemImgList = orderItem.getItem().getItemImgList();
+                // A에 달려있는 이미지들
+                // 그중에 대표이미지
+
+                for (ItemImg itemImg : itemImgList){
+                    if (itemImg.getRepimgYn().equals("Y")){
+                        orderItemDTO.setImgUrl(itemImg.getImgUrl());
+                    }
+                }
+                orderHistDTO.addOrderItemDTO(orderItemDTO);
+
+                // 디비에서 새로 가져온다 쿼리 부담 있다 Y
+                // 현재 orderItem에서 for문으로 Y대표이미지 찾는다.
+            }
+            orderHistDTOList.add(orderHistDTO);
+        }
+        return new PageImpl<OrderHistDTO>(orderHistDTOList, pageable, totalCount);
     }
 }
