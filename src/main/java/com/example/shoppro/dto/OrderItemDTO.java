@@ -23,4 +23,11 @@ public class OrderItemDTO {
     private int count;      // 수량
 
     private String imgUrl;  // 대표이미지
+
+    private int pkid;
+
+    public OrderItemDTO setPkid(int pkid){
+        this.pkid = pkid;
+        return this;
+    }
 }

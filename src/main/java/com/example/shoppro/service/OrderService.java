@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,37 @@ public class OrderService {
 
     // 단 주문목록들이 들어있는 주문 row한개는 누구의 주문인지 알기 위해서
     // email을 받는다.
+
+    // 내 주문이 맞는지 체크
+    public boolean validateOrder(Long orderId, String email){
+        Member member =
+                memberRepository.findByEmail(email);
+        Order order =
+                orderRepository.findById(orderId)
+                        .orElseThrow(EntityNotFoundException::new);
+        // 주문 id로 찾은 주문테이블의 회원 참조 eamil과 현재 로그인 한사람을 비교
+        if (!StringUtils.equals(member.getEmail(), order.getMember().getEmail())){
+            return false;
+        }
+        return true;
+    }
+
+    // 주문 취소
+    public void cancelOrder(Long orderId){
+        // 삭제할 번호를 받아서 삭제
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
+        // 주문상태인 orderStatus를 주문취소상태로 변경
+        order.setOrderStatus(OrderStatus.CANCEL);
+        // 주문 자식인 주문아이템들의 주문수량을 가지고 item의 주문수량에 더한다.
+
+        for (OrderItem orderItem : order.getOrderItemList()){
+            orderItem.getItem().setStockNumber(
+              orderItem.getItem().getStockNumber() + orderItem.getCount()
+            );
+        }
+    }
 
     public Long order(OrderDTO orderDTO, String email){ // principal.getName()로 가져온다. 로그인을 했다면
         // 현재 선택한 아이템의 id는 orderDTO로 들어온다 이값으로 판매중인 item Entity를 가져온다.
@@ -107,7 +139,7 @@ public class OrderService {
         for (Order order : orderList){
             OrderHistDTO orderHistDTO = new OrderHistDTO();
             orderHistDTO.setOrderId(order.getId());
-            orderHistDTO.setOrderDate(order.getOrderDate().toString());
+            orderHistDTO.setOrderDate(order.getOrderDate());
             orderHistDTO.setOrderStatus(order.getOrderStatus());
 
             List<OrderItem> orderItemList = order.getOrderItemList();
