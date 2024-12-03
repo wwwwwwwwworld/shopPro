@@ -23,7 +23,7 @@ class MemberServiceTest {
 
         MemberDTO memberDTO = MemberDTO.builder()
                 .address("경남 사이타마현")
-                .email("sin@a.a")
+                .email("sin2@a.a")
                 .password("1234")
                 .name("신짱구")
                 .build();
