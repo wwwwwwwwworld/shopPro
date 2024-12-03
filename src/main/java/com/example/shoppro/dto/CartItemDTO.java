@@ -23,5 +23,4 @@ public class CartItemDTO {
 
     @Min(value = 1, message = "최소수량은 1개입니다.")
     private int count;
-
 }
