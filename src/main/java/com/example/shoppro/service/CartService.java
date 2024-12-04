@@ -1,5 +1,6 @@
 package com.example.shoppro.service;
 
+import com.example.shoppro.dto.CartDetailDTO;
 import com.example.shoppro.dto.CartItemDTO;
 import com.example.shoppro.entity.Cart;
 import com.example.shoppro.entity.CartItem;
@@ -14,6 +15,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -77,5 +81,26 @@ public class CartService {
 
             return cartItem.getId();
         }
+    }
+
+    public List<CartDetailDTO> getCartList(String email){
+        // 장바구니의 pk는 1:1 관계이기 때문에 그리고 email은 member테이블에서
+        // 유니크키이기에 유일하다 멤버는 1, 그에 관계의 장바구니도 1
+
+        List<CartDetailDTO> cartDetailDTOList = new ArrayList<>();
+
+        Member member = memberRepository.findByEmail(email);
+
+        Cart cart = cartRepository.findByMemberId(member.getId());
+//        Cart cart = cartRepository.findByMemberEmail(email);
+
+        if (cart == null){
+            // 카트가 존재하지 않는다면
+            return cartDetailDTOList;
+        }
+        // 장바구니에 담겨있는 상품정보를 조회
+        cartDetailDTOList = cartItemRepository.findCartDetailDTOList(cart.getId());
+
+        return cartDetailDTOList;
     }
 }
