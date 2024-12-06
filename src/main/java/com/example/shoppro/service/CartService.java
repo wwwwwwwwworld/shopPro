@@ -2,6 +2,8 @@ package com.example.shoppro.service;
 
 import com.example.shoppro.dto.CartDetailDTO;
 import com.example.shoppro.dto.CartItemDTO;
+import com.example.shoppro.dto.CartOrderDTO;
+import com.example.shoppro.dto.OrderDTO;
 import com.example.shoppro.entity.Cart;
 import com.example.shoppro.entity.CartItem;
 import com.example.shoppro.entity.Item;
@@ -24,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class CartService {
+
+    private final OrderService orderService;
 
     private final ItemRepository itemRepository;
     // 아이템을 찾아야해서 findById(item.id)
@@ -102,5 +106,57 @@ public class CartService {
         cartDetailDTOList = cartItemRepository.findCartDetailDTOList(cart.getId());
 
         return cartDetailDTOList;
+    }
+
+    public boolean validateCartItem(Long cartItemid, String email){
+        Member member = memberRepository.findByEmail(email);
+
+        CartItem cartItem =
+                cartItemRepository.findById(cartItemid).orElseThrow(EntityNotFoundException::new);
+
+        if (member !=null && cartItem != null){
+            if (!member.getEmail().equals(cartItem.getCart().getMember().getEmail())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void deleteCartItem(Long cartItemid){
+        CartItem cartItem =
+                cartItemRepository.findById(cartItemid).orElseThrow(EntityNotFoundException::new);
+        cartItemRepository.delete(cartItem);
+    }
+
+    // 장바구니에서 들어온 주문
+
+    public Long orderCartItem(List<CartOrderDTO> cartOrderDTOList, String email){
+        // cartOrderDTOList cartItemId 들어있음
+
+        List<OrderDTO> orderDTOList = new ArrayList<>();
+
+        for (CartOrderDTO cartOrderDTO : cartOrderDTOList) {
+            // cartItemId를 하나씩 가지고
+
+            CartItem cartItem =
+                    cartItemRepository.findById(cartOrderDTO.getCartItemId())
+                            .orElseThrow(EntityNotFoundException::new);
+
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setItemId(cartItem.getItem().getId());
+            orderDTO.setCount(cartItem.getCount());
+
+            orderDTOList.add(orderDTO);
+        }
+        Long orderId =
+                orderService.orders(orderDTOList, email);   // 장바구니 아이템들 저장
+        for (CartOrderDTO cartOrderDTO : cartOrderDTOList){
+            CartItem cartItem =
+                    cartItemRepository.findById(cartOrderDTO.getCartItemId())
+                            .orElseThrow(EntityNotFoundException::new);
+
+            cartItemRepository.delete(cartItem);
+        }
+        return orderId;
     }
 }

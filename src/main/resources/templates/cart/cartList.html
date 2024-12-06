@@ -9,23 +9,219 @@
 </head>
 <body>
 <th:block layout:fragment="content">
+
     <h2 class="mb-4">장바구니 목록</h2>
-    <table>
+    <table  class="table table-hover">  <!--15, 70 15-->
         <thead>
-            <th>
-                <input type="checkbox">
-            </th>
-            <th>상품정보</th>
-            <th>상품금액</th>
+                <th class="align-middle text-center">
+                        <input class="form-check-input mt-0" id="checkall" type="checkbox" value="" aria-label="Checkbox for following text input">
+                </th>
+                <th>상품정보</th>
+                <th>상품금액</th>
         </thead>
         <tbody>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+
+
+            <!--장바구니 데이터 반복해서 출력-->
+            <th:block th:each="cartItem : ${cartDetailDTOList}">
+                <tr>
+                    <td class="align-middle text-center">
+                        <div class="row">
+                            <div class="col ">
+                                <input class="form-check-input mt-0" type="checkbox" name="cartChkBox" th:value="${cartItem.cartItemId}">
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width: 70%"  >
+                        <div class="row ">
+
+                            <div class="col-3 align-self-center">
+                                <img th:src="${cartItem.imgUrl}" th:alt="${cartItem.itemNm}" width="100px">
+                            </div>
+
+                            <div class="col-9 ">
+                                <span class="fw-bold fs-3 " th:text="${cartItem.itemNm}"></span>
+                                <div class="d-flex align-items-center" >
+                                    <span th:id="${'price_' + cartItem.cartItemId}" th:text="${cartItem.price}"></span>
+                                    <span class="ms-3"> 원</span>
+                                    <div class="row">
+                                        <div class="col offset-4 d-flex align-items-center">
+                                            <input type="number" th:id="${'count_' + cartItem.cartItemId}" class="form-control count" th:data-num="${cartItem.cartItemId}" min="1" th:value="${cartItem.count}">
+                                            개   <button th:value="${cartItem.cartItemId}" class="btn removebtn"><i class="bi bi-x-square"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </td>
+                    <td style="width: 15%" >
+                                <span class="fs-4" th:text="${cartItem.price   * cartItem.count }"></span>
+                    </td>
+                </tr>
+            </th:block>
+
+
+
+
+
         </tbody>
     </table>
+
+        <h2 class="text-center">총 주문금액 :
+            <span id="orderTotalPrice" class="text-danger"> 0원</span>
+        </h2>
+    <div class="text-center">
+        <button type="button" class="btn btn-primary cartorders">주문하기</button>
+    </div>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            $(".cartorders").on("click", function () {
+                orders()
+            })
+
+            $(".removebtn").on("click", function () {
+                let cartItemid =  $(this).val()
+
+                let url = "/carItem/" + cartItemid
+
+                $.ajax({
+                    url : url ,
+                    type: "delete",
+                    dataType : "json",
+                    success : function (result) {
+                        location.href = "/cart"
+                    },
+                    error : function (result, status, error) {
+
+                        if(result.status == '401'){
+                            alert("로그인 후 이용해주세요")
+                            location.href = "/members/login"
+                        }else {
+                            alert(result.responseText)
+                        }
+                    }
+                })
+            })
+
+            $("#checkall").on("click", function (){
+                checkAll()
+                getOrderTotalPrice()
+            })
+
+
+            $("input[name=cartChkBox]").change(function () {
+                alert("실행")
+                getOrderTotalPrice()
+            })
+
+
+            $(".count").on("change", function () {
+                let countVal = $(this).val()
+                let cartItemId = $(this).data("num")
+                // alert(countVal)
+                // alert(cartItemId)
+                let url = "/cartItem"
+
+                let cartItemDTO = {
+                    itemid  : cartItemId,
+                    count : countVal
+                }
+
+                $.ajax({
+                    url: url,
+                    type : "post",
+                    data : cartItemDTO ,
+                    success : function (result) {
+                        alert("결과 : " + result)
+                        getOrderTotalPrice()
+                    },
+                    error : function (result) {
+                        console.log(result.responseText)
+
+                    }
+                })
+            })
+
+            function checkAll() {
+                if( $("#checkall").prop("checked") ){
+
+                    $("input[name=cartChkBox]").prop("checked", true);
+
+                }else {
+                    $("input[name=cartChkBox]").prop("checked", false);
+                }
+            }
+
+            function orders(){
+
+                let url = "/cart/orders"
+
+                let dataList = new Array();
+
+                let paramData = new Object();
+
+                $("input[name=cartChkBox]:checked").each(function () {
+                    let cartItemid = $(this).val()
+                    let data = new Object();
+                    data["cartItemId"] = cartItemid;
+
+                    dataList.push(data);
+
+                })
+
+                console.log(dataList)
+                paramData["orderDTOList"] = dataList
+
+                console.log(paramData)
+                console.log(JSON.stringify(paramData))
+
+                $.ajax({
+
+                    url : url,
+                    type : "post",
+                    data : JSON.stringify(paramData),
+                    contentType : "application/json; charset=utf-8",
+                    dataType:  "json",
+                    success : function (result) {
+                        alert("주문이 완료 되었습니다.")
+                        location.href = "/orders"
+                    },
+                    error : function (result, status, error) {
+                        if(result.status == '401'){
+                            alert("로그인후 이용해주세요")
+                            location.href = "/members/login"
+                        }else {
+                            alert(result.responseText)
+                        }
+                    }
+                })
+            }
+
+            function getOrderTotalPrice() {
+
+                let orderTotalPrice  = 0;
+                $("input[name=cartChkBox]:checked").each(
+                    function () {
+                        let cartItemid = $(this).val()
+                        let price = $("#price_" + cartItemid).text()
+                        console.log(price)
+                        let count = $("#count_"  + cartItemid).val()
+                        console.log(count)
+                        orderTotalPrice +=   price * count;
+
+                    }
+                )
+                $("#orderTotalPrice").text(orderTotalPrice + ' 원')
+            }
+        })
+    </script>
 </th:block>
+
 </body>
 </html>

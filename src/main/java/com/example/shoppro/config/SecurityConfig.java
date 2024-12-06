@@ -26,11 +26,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorization -> authorization
                                 .requestMatchers("/members/login/**").permitAll()      //로그인페이지는 누구나 접속이 가능한 권한
-                                .requestMatchers("/cart").authenticated() // 로그인 한 사람만 접속 가능
+                                .requestMatchers("/cart", "/cartItem").authenticated() // 로그인 한 사람만 접속 가능
 //                                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/user/list").hasRole("ADMIN")
                                 .requestMatchers("/order/**").authenticated() // 로그인 한 사람만 주문 가능
+//                                .requestMatchers("/reply/register").authenticated()
+//                                .requestMatchers("/reply/update").authenticated()
                                 .anyRequest().permitAll()       // 그외 다 열어
 //                            .anyRequest().authenticated()   //그 이외에는 다 로그인해서 접속해
 

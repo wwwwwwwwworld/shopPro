@@ -122,7 +122,37 @@ public class OrderService {
             return null;
         }
     }
+    public Long orders(List<OrderDTO> orderDTOList, String email){
 
+        // 주문을 했다면 판매하고 있는 상품의 수량 변경
+
+        Member member = memberRepository.findByEmail(email);
+        List<OrderItem> orderItemList = new ArrayList<>();
+        Order order = new Order();
+
+        for (OrderDTO orderDTO : orderDTOList){
+            Item item =
+                    itemRepository.findById(orderDTO.getItemId())
+                            .orElseThrow(EntityNotFoundException::new);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setItem(item);
+            orderItem.setCount(orderDTO.getCount());
+            orderItem.setOrderPrice(item.getPrice());
+            orderItem.setOrder(order);
+
+            item.setStockNumber(item.getStockNumber() - orderDTO.getCount());
+
+            orderItemList.add(orderItem);
+        }
+        order.setMember(member);
+        order.setOrderStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderItemList(orderItemList);
+
+        orderRepository.save(order);
+
+        return order.getId();
+    }
     // 구매이력
     public Page<OrderHistDTO> getOrderList(String email, Pageable pageable){
                                 // repository에서 필요한 email

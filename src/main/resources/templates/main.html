@@ -4,68 +4,89 @@
       layout:decorate="~{layouts/layout1}"
 >
 <head>
-    <meta charset="UTF-8">
-    <title>환영하오</title>
+  <meta charset="UTF-8">
+  <title>환영하오</title>
 </head>
 <body>
 <th:block layout:fragment="content">
-    <div class="row">
-        <div class="col">
-            <div id="carouselExample" class="carousel slide">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="..." class="d-block w-100" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="..." class="d-block w-100" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="..." class="d-block w-100" alt="...">
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
+
+
+  <div class="row">
+    <div class="col">
+      <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/dog.jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="/dog.jpg" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="/dog.jpg" class="d-block w-100" alt="...">
+          </div>
         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
     </div>
+  </div>
+
+
+
     <th:block th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">
-        <div class="row row-cols-md-3">
-            <div class="col">
-            </div>
+      <div class="row">
+        <div class="col text-center">
+
+          <h1>비어있음</h1>
+
         </div>
+      </div>
+
     </th:block>
     <th:block th:unless="${#lists.isEmpty(pageResponseDTO.dtoList)}">
-        <div class="row">
-            <div class="col text-center">
-                <h1>비어있음</h1>
-            </div>
-        </div>
-    </th:block>
-    <th:block th:unless="${#lists.isEmpty(pageResponseDTO.dtoList)}">
-        <div class="row row-cols-md-3">
-            <th:block th:each="dto: ${pageResponseDTO.dtoList}">
-                <div class="col mb-3">
-                    <a th:href="@{/item/read(id=${dto.id})}" style="text-decoration: none; color: black">
-                        <div class="card">
-                            <img src="..." class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title" th:text="${dto.itemNm}">Card title</h5>
-                                <p class="card-text text-truncate" th:text="${dto.itemDetail}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <p class="card-text" th:text="${dto.price+'원'}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
-                            </div>
-                        </div>
-                    </a>
+      <div class="row row-cols-md-3">
+
+        <th:block th:each="dto: ${pageResponseDTO.dtoList}">
+          <div class="col mb-3">
+            <a th:href="@{/item/read(id=${dto.id})}">
+              <div class="card">
+                <div class="row">
+                  <div class="col">
+                    <th:block th:each="img: ${dto.itemImgDTOList}">
+                      <th:block th:if="${ img.repimgYn == 'Y'}">
+                        <img th:src="${img.imgUrl}" class="card-img-top" th:alt="${dto.itemNm}">
+                      </th:block>
+                    </th:block>
+                  </div>
                 </div>
-            </th:block>
-        </div>
+
+
+
+                <div class="card-body">
+                  <h5 class="card-title" th:text="${dto.itemNm}">Card title</h5>
+                  <p class="card-text text-truncate" th:text="${dto.itemDetail}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                  <p class="card-text" th:text="${dto.price+'원'}"></p>
+                </div>
+              </div>
+            </a>
+
+
+          </div>
+        </th:block>
+
+      </div>
     </th:block>
+
+
+
+
 </th:block>
+
 </body>
 </html>

@@ -10,8 +10,77 @@
 <body>
 
     <th:block layout:fragment="content">
-        <div>
-            zzzzzzzz
+
+        <div class="row">
+            <form action="/category/register" method="post">
+                카테고리명 : <input type="text" name="caname">
+                <button>카테고리저장</button>
+            </form>
+        </div>
+        <hr>
+
+
+        <div class="row">
+            <form action="/category/boardnew" method="post">
+
+                게시판 종류선택 :
+                <select name="caid">
+                    <th:block th:each="list: ${calist}">
+                        <option th:value="${list.id}"  th:text="${list.caname}"></option>
+                    </th:block>
+
+                </select>
+
+                <br>
+                게시판 제목 : <input type="text" name="title">
+                <button>카테고리저장</button>
+            </form>
+        </div>
+        <div class="row">
+
+
+
+            <div class="col">
+                질문게시판 <a href="/sample/sample?caid=3">더보기</a>
+                <ul>
+                    <th:block th:each="list: ${boardDTOListA}">
+
+                        <li th:text="${list.title}"></li>
+
+                    </th:block>
+                </ul>
+
+            </div>
+            <div class="col">
+                자유게시판  <a href="/sample/sample?caid=1">더보기</a>
+                <ul>
+                    <th:block th:each="list: ${boardDTOListB}">
+
+                        <li th:text="${list.title}"></li>
+
+                    </th:block>
+                </ul>
+
+            </div>
+
+
+
+        </div>
+        <div class="row">
+
+            <div class="col">
+                변화된 게시판
+                <ul>
+                    <th:block th:each="list: ${boardDTOList}">
+
+                        <li th:text="${list.title}"></li>
+
+                    </th:block>
+                </ul>
+
+            </div>
+
+
         </div>
 
     </th:block>
